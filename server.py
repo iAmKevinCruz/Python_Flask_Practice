@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template
+from flask import Flask, render_template, abort
 from mock_data import mock_data
 app = Flask(__name__)
 
@@ -58,6 +58,28 @@ def get_categories():
         if category not in categories:
             categories.append(category)
 
+    return json.dumps(categories)
+
+
+@app.route("/api/product/<id>")
+def get_by_id(id):
+    found = False
+    for product in mock_data:
+        if product["_id"] == id:
+            found = True
+            return json.dumps(product)
+    if not found:
+        abort(404)
+
+
+@app.route("/api/catalog/<cat>")
+def get_by_category(cat):
+    found = False
+    categories = []
+    for product in mock_data:
+        if product["category"].lower() == cat.lower():
+            found = True
+            categories.append(product)
     return json.dumps(categories)
 
 

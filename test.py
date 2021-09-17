@@ -87,9 +87,34 @@ def product_search():
                 print("------------------------------------------")
                 print(product)
                 print("------------------------------------------")
+        length = len(categories)
+        print("Total items in category: " + f"{length}")
         if not found:
             print("Error: No product with category: '" + category + "' found!")
             return None
 
 
-product_search()
+# product_search()
+
+
+def get_cheapest():
+    cheap = mock_data[0]
+    for product in mock_data:
+        if product["price"] < cheap["price"]:
+            cheap = product
+    print(cheap)
+    return cheap
+
+
+# get_cheapest()
+
+
+def sum_of_prices():
+    prices = []
+    for products in mock_data:
+        prices.append(products["price"])
+    total = sum(prices)
+    print(total)
+
+
+sum_of_prices()
