@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, request
 from mock_data import mock_data
 app = Flask(__name__)
 
@@ -40,13 +40,31 @@ def address():
     return f"{address['number']} {address['street']}"
 
 
-@app.route("/api/catalog")
+# API Methods
+
+@app.route("/api/catalog", methods=["GET"])
 def get_catalog():
     catalog = [
         {"_id": "001", "title": "Strawberry"},
         {"_id": "002", "title": "Orange Juice"}
     ]
+    print(request.headers)
+    return json.dumps(mock_data)
 
+
+@app.route("/api/catalog", methods=["POST"])
+def save_product():
+    product = request.get_json()
+
+    if not "price" in product or product["price"] <= 0:
+        abort(400, "Price is required and should be greater than 0")
+
+    if not "title" in product or len(product["title"]) < 5:
+        abort(400, "Title is required and must be at least 5 characters long")
+
+    mock_data.append(product)
+    product["_id"] = len(product["title"])
+    # return json.dumps(product)
     return json.dumps(mock_data)
 
 
@@ -83,9 +101,20 @@ def get_by_category(cat):
     return json.dumps(categories)
 
 
+@app.route("/api/product/cheapest")
+def get_cheapest():
+    cheap = mock_data[0]
+    for product in mock_data:
+        if product["price"] < cheap["price"]:
+            cheap = product
+    print(cheap)
+    return json.dumps(cheap)
+
+
 """
 if "blah" not in somestring: 
     continue
 """
+
 
 app.run(debug=True)

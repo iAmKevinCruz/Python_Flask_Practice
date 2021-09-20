@@ -106,7 +106,7 @@ def get_cheapest():
     return cheap
 
 
-# get_cheapest()
+get_cheapest()
 
 
 def sum_of_prices():
@@ -117,4 +117,4 @@ def sum_of_prices():
     print(total)
 
 
-sum_of_prices()
+# sum_of_prices()
