@@ -29,6 +29,9 @@ cd flask_api
 # MUST BE on the project folder
 source venv/bin/activate
 
+# Start MongoDB
+sudo service mongodb start
+
 python3 server.py
 
 # kill the server

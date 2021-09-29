@@ -2,6 +2,7 @@ import json
 from flask import Flask, render_template, abort, request
 from mock_data import mock_data
 from flask_cors import CORS
+from config import db
 
 app = Flask(__name__)
 CORS(app)
@@ -47,12 +48,18 @@ def address():
 
 @app.route("/api/catalog", methods=["GET"])
 def get_catalog():
-    catalog = [
-        {"_id": "001", "title": "Strawberry"},
-        {"_id": "002", "title": "Orange Juice"}
-    ]
-    print(request.headers)
-    return json.dumps(mock_data)
+    # read products from database and run it
+    cursor = db.products.find({})  # get all records/documents
+    catalog = []
+    for prod in cursor:
+        # print(prod)
+        catalog.append(prod)
+
+    return json.dumps(catalog)
+
+    # No longer used due to DB usage
+    # print(request.headers)
+    # return json.dumps(mock_data)
 
 
 @app.route("/api/catalog", methods=["POST"])
@@ -118,6 +125,18 @@ def get_cheapest():
 if "blah" not in somestring: 
     continue
 """
+
+
+@app.route("/api/test/loadData")
+def load_data():
+
+    return "Data Already Loaded"
+
+    # load every product in mock_data into the database
+    for prod in mock_data:
+        db.products.insert_one(prod)
+
+    return "Data loaded"
 
 
 app.run(debug=True)
