@@ -8,4 +8,4 @@ mongo_url = "mongodb://localhost:27017"
 
 client = pymongo.MongoClient(mongo_url)
 # db points to the actual data base
-db = client.get_database("storeData")
+db = client.get_database("ecommerce_guitar_shop")
