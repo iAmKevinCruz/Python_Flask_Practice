@@ -2,7 +2,7 @@ import json
 from flask import Flask, render_template, abort, request
 from mock_data import mock_data
 from flask_cors import CORS
-from config import db
+from config import db, parse_json
 
 app = Flask(__name__)
 CORS(app)
@@ -55,7 +55,8 @@ def get_catalog():
         # print(prod)
         catalog.append(prod)
 
-    return json.dumps(catalog)
+    return parse_json(catalog)
+    # return json.dumps(catalog)
 
     # No longer used due to DB usage
     # print(request.headers)
@@ -72,21 +73,34 @@ def save_product():
     if not "title" in product or len(product["title"]) < 5:
         abort(400, "Title is required and must be at least 5 characters long")
 
-    mock_data.append(product)
-    product["_id"] = len(product["title"])
+    # mock_data.append(product)
+    # product["_id"] = len(product["title"])
     # return json.dumps(product)
-    return json.dumps(mock_data)
+    # return json.dumps(mock_data)
+
+    # save product into the DB
+    # MongoDB add a _id with a uniqe value
+    db.products.insert_one(product)
+    return parse_json(product)
 
 
 @app.route("/api/categories")
 def get_categories():
-    categories = []
-    for product in mock_data:
-        category = product["category"]
-        if category not in categories:
-            categories.append(category)
+    # categories = []
+    # for product in mock_data:
+    #     category = product["category"]
+    #     if category not in categories:
+    #         categories.append(category)
+    # return json.dumps(categories)
 
-    return json.dumps(categories)
+    # return a list with the uniqe categories [string, string]
+    cursor = db.products.find({})
+    categories = []
+    for cat in cursor:
+        if cat['category'] not in categories:
+            categories.append(cat['category'])
+    return parse_json(categories)
+
 
 
 @app.route("/api/product/<id>")
