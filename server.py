@@ -105,34 +105,57 @@ def get_categories():
 
 @app.route("/api/product/<id>")
 def get_by_id(id):
-    found = False
-    for product in mock_data:
-        if product["_id"] == id:
-            found = True
-            return json.dumps(product)
-    if not found:
+    # found = False
+    # for product in mock_data:
+    #     if product["_id"] == id:
+    #         found = True
+    #         return json.dumps(product)
+    # if not found:
+    #     abort(404)
+
+    product = db.products.find_one({"_id" : id})
+    if not product:
         abort(404)
+
+    return parse_json(product)
 
 
 @app.route("/api/catalog/<cat>")
 def get_by_category(cat):
-    found = False
-    categories = []
-    for product in mock_data:
-        if product["category"].lower() == cat.lower():
-            found = True
-            categories.append(product)
-    return json.dumps(categories)
+    # found = False
+    # categories = []
+    # for product in mock_data:
+    #     if product["category"].lower() == cat.lower():
+    #         found = True
+    #         categories.append(product)
+    # return json.dumps(categories)
+
+    cursor = db.products.find({"category" : cat.lower()})
+    products = []
+    for prod in cursor:
+        products.append(prod)
+        
+    return parse_json(products)
+
+
 
 
 @app.route("/api/product/cheapest")
 def get_cheapest():
-    cheap = mock_data[0]
-    for product in mock_data:
-        if product["price"] < cheap["price"]:
-            cheap = product
-    print(cheap)
-    return json.dumps(cheap)
+    # cheap = mock_data[0]
+    # for product in mock_data:
+    #     if product["price"] < cheap["price"]:
+    #         cheap = product
+    # print(cheap)
+    # return json.dumps(cheap)
+
+    cursor = db.products.find()
+    cheap = cursor[0]
+    for prod in cursor:
+        if prod["price"] < cheap["price"]:
+            cheap = prod
+
+    return parse_json(cheap)
 
 
 """
@@ -151,6 +174,26 @@ def load_data():
         db.products.insert_one(prod)
 
     return "Data loaded"
+
+@app.route("/api/couponCode", methods=["POST"])
+def save_coupon():
+    coupon = request.get_json()
+    if not "code" in coupon:
+        abort(400, "Title is required")
+
+    if not "discount" in coupon or coupon["discount"] <= 0:
+        abort(400, "Discount is required and must be more than 0")
+    
+    db.couponCodes.insert_one(coupon)
+    return parse_json(coupon)
+
+@app.route("/api/couponCode")
+def get_coupon():
+    cursor = db.couponCodes.find({})
+    codes = []
+    for code in cursor:
+        codes.append(code)
+    return parse_json(codes)
 
 
 app.run(debug=True)

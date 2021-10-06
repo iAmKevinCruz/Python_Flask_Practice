@@ -5,7 +5,7 @@ POST http://127.0.0.1:5000/api/catalog HTTP/1.1
 Content-Type: application/json
 
 {
-    "title": "Tes",
+    "title": "Tester",
     "price": 10,
     "cateory": "tools",
     "image": "test.jpg",
@@ -17,10 +17,13 @@ Content-Type: application/json
 GET http://127.0.0.1:5000/api/categories HTTP/1.1
 
 ###
-GET http://127.0.0.1:5000/api/product/a456w7e8jhg HTTP/1.1
+GET http://127.0.0.1:5000/api/product/615cd57a9e8ee790db03832e HTTP/1.1
 
 ###
-GET http://127.0.0.1:5000/api/catalog/tools HTTP/1.1
+GET http://127.0.0.1:5000/api/product/009 HTTP/1.1
+
+###
+GET http://127.0.0.1:5000/api/catalog/accoustic HTTP/1.1
 
 ###
 GET http://127.0.0.1:5000/api/cheapest HTTP/1.1
